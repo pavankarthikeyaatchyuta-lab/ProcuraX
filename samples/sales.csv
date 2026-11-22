@@ -1,0 +1,2 @@
+source_key,invoice_no,date,sku,qty,factor,rate,discount,tax_pct
+sale-example-001,S-001,2026-11-10,TEA-250,2,1,110,0,5

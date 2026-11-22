@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+.venv/
+env/
+venv/
+
+# Next.js build output
+.next/
+frontend/.next/
+out/
+build/
+dist/
+
+# Python caches
+__pycache__/
+*/__pycache__/
+*/*/__pycache__/
+.pytest_cache/
+.ruff_cache/
+*.py[cod]
+*$py.class
+
+# Databases & local data
+*.db
+*.db-journal
+*.db.bak
+procurement.db
+backend/procurement.db*
+data/
+backend/data/
+
+# Environment and secrets
+.env
+.env*.local
+.env.*
+secrets/
+
+# Logs & testing
+*.log
+test-results/
+playwright-report/
+*.tsbuildinfo
+scratch/
+
+# Archives & dumps
+*.dump
+*.tar.gz
+*.zip

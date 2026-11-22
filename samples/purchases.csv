@@ -1,0 +1,2 @@
+source_key,invoice_no,supplier_gstin,date,sku,qty,factor,rate,discount,tax_pct,freight
+bill-example-001,EX-001,27AAACX1234A1Z5,2026-11-10,TEA-250,2,12,960,0,5,24

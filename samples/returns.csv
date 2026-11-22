@@ -1,0 +1,2 @@
+source_key,invoice_no,supplier_gstin,date,sku,qty,factor,rate,return_type
+return-example-001,R-001,,2026-11-10,TEA-250,1,1,110,customer_return

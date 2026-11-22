@@ -1,0 +1,74 @@
+name: vyaya
+services:
+  db:
+    image: postgres:17-bookworm
+    environment:
+      POSTGRES_DB: procurement
+      POSTGRES_USER: procure
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Run scripts/setup.ps1 first}
+    volumes: ["postgres:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U procure -d procurement"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes: ["redis:/data"]
+  scanner:
+    image: clamav/clamav:stable
+    volumes: ["clamav:/var/lib/clamav"]
+    ports: ["127.0.0.1:3310:3310"]
+  api:
+    build: ./backend
+    environment: &backend-env
+      DATABASE_URL: postgresql+psycopg://procure:${DB_PASSWORD}@db:5432/procurement
+      REDIS_URL: redis://redis:6379/0
+      DOCUMENT_DIR: /app/data/documents
+      TOKEN_ENCRYPTION_KEY: ${TOKEN_ENCRYPTION_KEY}
+      DEMO_PASSWORD: ${DEMO_PASSWORD}
+      APP_ORIGIN: http://localhost:3000
+      CLAMAV_HOST: scanner
+      ZOHO_CLIENT_ID: ${ZOHO_CLIENT_ID:-}
+      ZOHO_CLIENT_SECRET: ${ZOHO_CLIENT_SECRET:-}
+      ZOHO_REDIRECT_URI: http://localhost:3000/api/v1/zoho/callback
+      GOOGLE_DOCUMENT_AI_PROCESSOR: ${GOOGLE_DOCUMENT_AI_PROCESSOR:-}
+      GOOGLE_APPLICATION_CREDENTIALS: /run/secrets/google.json
+    volumes:
+      - documents:/app/data/documents
+      - ./secrets:/run/secrets:ro
+    ports: ["127.0.0.1:8000:8000"]
+    depends_on:
+      db: {condition: service_healthy}
+      redis: {condition: service_started}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+  worker:
+    build: ./backend
+    command: ["sh", "-c", "python -m app.cli init && rq worker --url redis://redis:6379/0 default"]
+    environment: *backend-env
+    volumes: ["documents:/app/data/documents", "./secrets:/run/secrets:ro"]
+    depends_on:
+      api: {condition: service_healthy}
+  scheduler:
+    build: ./backend
+    command: ["sh", "-c", "python -m app.cli init && python -m app.scheduler"]
+    environment: *backend-env
+    volumes: ["documents:/app/data/documents"]
+    depends_on:
+      api: {condition: service_healthy}
+  web:
+    build: ./frontend
+    environment: {API_URL: "http://api:8000"}
+    ports: ["127.0.0.1:3000:3000"]
+    depends_on: [api]
+volumes:
+  postgres:
+  documents:
+  redis:
+  clamav:
