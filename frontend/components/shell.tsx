@@ -29,6 +29,9 @@ import {
   Store,
   CheckCheck,
   Camera,
+  LayoutGrid,
+  Boxes,
+  SlidersHorizontal,
 } from "lucide-react";
 import { useWorkspace, useResource } from "./workspace";
 import { Loading } from "./ui";
@@ -120,15 +123,15 @@ function MobileBottomNav({
         href="/overview"
         className={`mobile-nav-btn ${isOverview ? "active" : ""}`}
       >
-        <LayoutDashboard size={19} />
-        <span>Overview</span>
+        <LayoutGrid size={18} />
+        <span>Home</span>
       </Link>
 
       <Link
         href="/purchasing/planner"
         className={`mobile-nav-btn ${isPlanner ? "active" : ""}`}
       >
-        <TrendingUp size={19} />
+        <TrendingUp size={18} />
         <span>Planner</span>
       </Link>
 
@@ -139,16 +142,16 @@ function MobileBottomNav({
         aria-label="Scan or upload invoice"
       >
         <div className="mobile-fab-icon-wrap">
-          <Camera size={22} />
+          <Camera size={19} />
         </div>
-        <span className="mobile-fab-title">Scan Bill</span>
+        <span className="mobile-fab-title">Scan</span>
       </Link>
 
       <Link
         href="/inventory/stock"
         className={`mobile-nav-btn ${isStock ? "active" : ""}`}
       >
-        <Layers3 size={19} />
+        <Boxes size={18} />
         <span>Stock</span>
       </Link>
 
@@ -158,7 +161,7 @@ function MobileBottomNav({
         onClick={onOpenMenu}
         aria-label="Open full menu"
       >
-        <Menu size={19} />
+        <SlidersHorizontal size={18} />
         <span>Menu</span>
       </button>
     </nav>
@@ -382,11 +385,11 @@ export function Shell({ children }: { children: ReactNode }) {
               aria-label="Open navigation"
               onClick={() => setOpen(true)}
             >
-              <Menu size={20} />
+              <SlidersHorizontal size={16} />
             </button>
 
             <Link href="/overview" className="mobile-topbar-brand">
-              <AnimatedLogo size={24} />
+              <AnimatedLogo size={20} />
               <span className="mobile-brand-title">ProcuraX</span>
             </Link>
 

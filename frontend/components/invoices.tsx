@@ -75,6 +75,7 @@ export function Invoices() {
   const { api, business, branch, setNotice } = useWorkspace();
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
+  const [filterStatus, setFilterStatus] = useState<"all" | "review" | "verified">("all");
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [cameraError, setCameraError] = useState("");
   const [facingMode, setFacingMode] = useState<"environment" | "user">("environment");
@@ -326,30 +327,30 @@ export function Invoices() {
             <div className="dropzone-sub">
               Fast automatic line-item parsing, tax split & anomaly verification
             </div>
-            <div style={{ display: "flex", gap: "10px", justifyContent: "center", alignItems: "center", marginTop: "12px" }}>
-              <span className="dropzone-size-pill">Max size: 10 MB</span>
+            <div className="dropzone-actions-row" style={{ display: "flex", gap: "8px", justifyContent: "center", alignItems: "center", marginTop: "12px", flexWrap: "wrap" }}>
               <button
                 type="button"
+                className="camera-scan-btn compact"
                 onClick={(e) => {
                   e.stopPropagation();
                   startCamera();
                 }}
-                style={{
-                  background: "#f0f9ff",
-                  color: "#0284c7",
-                  border: "1px solid #bae6fd",
-                  borderRadius: "20px",
-                  padding: "4px 12px",
-                  fontSize: "12px",
-                  fontWeight: 600,
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  cursor: "pointer",
-                }}
+                style={{ padding: "6px 14px", fontSize: "12px", borderRadius: "8px" }}
               >
                 <Camera size={13} /> Snap with Camera
               </button>
+              <button
+                type="button"
+                className="period-dropdown-btn compact"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  fileInputRef.current?.click();
+                }}
+                style={{ padding: "6px 14px", fontSize: "12px", borderRadius: "8px" }}
+              >
+                <Upload size={13} /> Pick File
+              </button>
+              <span className="dropzone-size-pill" style={{ padding: "3px 8px", fontSize: "10px" }}>Max 10 MB</span>
             </div>
           </div>
 
@@ -379,6 +380,31 @@ export function Invoices() {
         </div>
       </div>
 
+      {/* Mobile Filter Tabs */}
+      <div className="mobile-filter-pills">
+        <button
+          type="button"
+          className={`mobile-filter-pill ${filterStatus === "all" ? "active" : ""}`}
+          onClick={() => setFilterStatus("all")}
+        >
+          All ({(resource.data || []).length})
+        </button>
+        <button
+          type="button"
+          className={`mobile-filter-pill ${filterStatus === "review" ? "active" : ""}`}
+          onClick={() => setFilterStatus("review")}
+        >
+          Needs Review ({(resource.data || []).filter((d: any) => d.status !== "verified" && d.status !== "approved").length})
+        </button>
+        <button
+          type="button"
+          className={`mobile-filter-pill ${filterStatus === "verified" ? "active" : ""}`}
+          onClick={() => setFilterStatus("verified")}
+        >
+          Verified ({(resource.data || []).filter((d: any) => d.status === "verified" || d.status === "approved").length})
+        </button>
+      </div>
+
       {/* Invoices List / Table */}
       <div className="card-panel">
         <div className="panel-header-row">
@@ -393,17 +419,25 @@ export function Invoices() {
           </div>
         </div>
 
-        {(resource.data || []).length === 0 ? (
+        {((resource.data || []).filter((d: any) => {
+          if (filterStatus === "verified") return d.status === "verified" || d.status === "approved";
+          if (filterStatus === "review") return d.status !== "verified" && d.status !== "approved";
+          return true;
+        })).length === 0 ? (
           <div style={{ textAlign: "center", padding: "40px 20px" }}>
             <FileText size={36} color="#94a3b8" style={{ margin: "0 auto 12px" }} />
-            <h4 style={{ margin: "0 0 6px", fontSize: "15px", color: "#0f172a" }}>No Invoices Uploaded Yet</h4>
+            <h4 style={{ margin: "0 0 6px", fontSize: "15px", color: "#0f172a" }}>No Matching Invoices</h4>
             <p style={{ margin: 0, fontSize: "13px", color: "#64748b" }}>
-              Upload your first supplier invoice above to extract prices and protect margins.
+              Upload your supplier invoice above to extract prices and protect margins.
             </p>
           </div>
         ) : (
           <DataTable
-            rows={resource.data || []}
+            rows={(resource.data || []).filter((d: any) => {
+              if (filterStatus === "verified") return d.status === "verified" || d.status === "approved";
+              if (filterStatus === "review") return d.status !== "verified" && d.status !== "approved";
+              return true;
+            })}
             columns={[
               {
                 key: "name",
