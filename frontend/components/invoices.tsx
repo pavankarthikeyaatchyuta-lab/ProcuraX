@@ -10,6 +10,9 @@ import {
   ShieldCheck,
   Plus,
   CheckCircle,
+  Camera,
+  X,
+  RefreshCw,
 } from "lucide-react";
 import { useResource, useWorkspace, date, type Row } from "./workspace";
 import {
@@ -72,7 +75,14 @@ export function Invoices() {
   const { api, business, branch, setNotice } = useWorkspace();
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [cameraError, setCameraError] = useState("");
+  const [facingMode, setFacingMode] = useState<"environment" | "user">("environment");
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
   const handleFileUpload = async (file: File) => {
     if (!file) return;
@@ -91,8 +101,93 @@ export function Invoices() {
     }
   };
 
+  const startCamera = async (mode: "environment" | "user" = facingMode) => {
+    setCameraError("");
+    setIsCameraOpen(true);
+    try {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+      }
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        cameraInputRef.current?.click();
+        setIsCameraOpen(false);
+        return;
+      }
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: mode,
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
+        },
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
+    } catch (err: any) {
+      console.error("Camera access error:", err);
+      setCameraError(err.message || "Unable to access camera. Please allow camera permissions or use mobile capture.");
+    }
+  };
+
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
+    setIsCameraOpen(false);
+    setCameraError("");
+  };
+
+  const switchCamera = () => {
+    const nextMode = facingMode === "environment" ? "user" : "environment";
+    setFacingMode(nextMode);
+    startCamera(nextMode);
+  };
+
+  const capturePhoto = () => {
+    if (!videoRef.current) return;
+    const video = videoRef.current;
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth || 1280;
+    canvas.height = video.videoHeight || 720;
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+            const file = new File([blob], `invoice-camera-${timestamp}.jpg`, {
+              type: "image/jpeg",
+            });
+            stopCamera();
+            handleFileUpload(file);
+          }
+        },
+        "image/jpeg",
+        0.95
+      );
+    }
+  };
+
   return (
     <div className="invoices-page">
+      {/* Hidden native camera capture input for mobile devices */}
+      <input
+        type="file"
+        ref={cameraInputRef}
+        style={{ display: "none" }}
+        accept="image/*"
+        capture="environment"
+        onChange={(e) => {
+          if (e.target.files?.[0]) {
+            handleFileUpload(e.target.files[0]);
+          }
+        }}
+      />
+
       {/* Page Title Header */}
       <div className="overview-header" style={{ marginBottom: "20px" }}>
         <div>
@@ -101,7 +196,16 @@ export function Invoices() {
             Extract items, prices and taxes automatically.
           </p>
         </div>
-        <div className="overview-header-actions">
+        <div className="overview-header-actions" style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+          <button
+            type="button"
+            className="camera-scan-btn"
+            onClick={() => startCamera()}
+            title="Scan or capture invoice using camera"
+          >
+            <Camera size={15} />
+            Scan with Camera
+          </button>
           <Link href="/purchasing/invoices/import" className="period-dropdown-btn">
             <Upload size={14} />
             Import spreadsheet
@@ -110,6 +214,81 @@ export function Invoices() {
       </div>
 
       <ErrorBox error={error || resource.error} />
+
+      {/* Camera Live Modal Overlay */}
+      {isCameraOpen && (
+        <div className="modal-overlay" onClick={stopCamera}>
+          <div className="camera-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <div style={{ width: "36px", height: "36px", borderRadius: "10px", background: "#eff6ff", color: "#2563eb", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Camera size={20} />
+                </div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>Camera Document Scanner</h3>
+                  <p style={{ margin: 0, fontSize: "12px", color: "#64748b" }}>Align the bill within the guides and snap</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={stopCamera}
+                style={{ background: "transparent", border: "none", color: "#64748b", cursor: "pointer", padding: "4px" }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {cameraError ? (
+              <div style={{ margin: "20px 0", padding: "16px", background: "#fef2f2", border: "1px solid #fecaca", borderRadius: "10px", color: "#b91c1c", fontSize: "13px" }}>
+                <p style={{ margin: "0 0 12px", fontWeight: 600 }}>{cameraError}</p>
+                <button
+                  type="button"
+                  className="camera-scan-btn"
+                  onClick={() => {
+                    stopCamera();
+                    cameraInputRef.current?.click();
+                  }}
+                >
+                  <Camera size={14} /> Open Device Camera Picker
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="camera-viewfinder-wrapper">
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    muted
+                    style={{ transform: facingMode === "user" ? "scaleX(-1)" : "none" }}
+                  />
+                  <div className="camera-guide-frame" />
+                  <div className="camera-guide-text">Position invoice edges inside guide frame</div>
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "12px" }}>
+                  <button
+                    type="button"
+                    onClick={switchCamera}
+                    className="period-dropdown-btn"
+                    title="Switch camera"
+                  >
+                    <RefreshCw size={14} /> Flip Camera
+                  </button>
+                  <button
+                    type="button"
+                    onClick={capturePhoto}
+                    className="camera-scan-btn"
+                    style={{ padding: "10px 22px", fontSize: "14px" }}
+                  >
+                    <Camera size={16} /> Snap & Extract
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* 2. Central Upload Card matching Page 2 blueprint */}
       <div className="invoice-upload-container">
@@ -147,7 +326,31 @@ export function Invoices() {
             <div className="dropzone-sub">
               Fast automatic line-item parsing, tax split & anomaly verification
             </div>
-            <span className="dropzone-size-pill">Max size: 10 MB</span>
+            <div style={{ display: "flex", gap: "10px", justifyContent: "center", alignItems: "center", marginTop: "12px" }}>
+              <span className="dropzone-size-pill">Max size: 10 MB</span>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  startCamera();
+                }}
+                style={{
+                  background: "#f0f9ff",
+                  color: "#0284c7",
+                  border: "1px solid #bae6fd",
+                  borderRadius: "20px",
+                  padding: "4px 12px",
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  cursor: "pointer",
+                }}
+              >
+                <Camera size={13} /> Snap with Camera
+              </button>
+            </div>
           </div>
 
           {/* Right 3D Visual Invoice graphic */}
