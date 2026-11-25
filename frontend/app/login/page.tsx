@@ -66,8 +66,7 @@ export default function Login(){
             button="Sign in"
             fields={[
               {key:'email',label:'Email address',type:'email',required:true},
-              {key:'password',label:'Password',type:'password',required:true},
-              {key:'code',label:'Authenticator code',help:'Enter your code if two-step verification is enabled.'}
+              {key:'password',label:'Password',type:'password',required:true}
             ]}
             onSubmit={async values=>{
               const response=await fetch('/api/v1/auth/login',{
