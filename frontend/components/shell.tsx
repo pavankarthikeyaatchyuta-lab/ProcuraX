@@ -28,6 +28,7 @@ import {
   Home,
   Store,
   CheckCheck,
+  Camera,
 } from "lucide-react";
 import { useWorkspace, useResource } from "./workspace";
 import { Loading } from "./ui";
@@ -100,6 +101,69 @@ const navigation = [
     ],
   },
 ] as const;
+
+function MobileBottomNav({
+  path,
+  onOpenMenu,
+}: {
+  path: string;
+  onOpenMenu: () => void;
+}) {
+  const isOverview = path === "/overview" || path === "/";
+  const isPlanner = path.startsWith("/purchasing/planner");
+  const isInvoices = path.startsWith("/purchasing/invoices");
+  const isStock = path.startsWith("/inventory");
+
+  return (
+    <nav className="mobile-bottom-nav" aria-label="Mobile Navigation">
+      <Link
+        href="/overview"
+        className={`mobile-nav-btn ${isOverview ? "active" : ""}`}
+      >
+        <LayoutDashboard size={19} />
+        <span>Overview</span>
+      </Link>
+
+      <Link
+        href="/purchasing/planner"
+        className={`mobile-nav-btn ${isPlanner ? "active" : ""}`}
+      >
+        <TrendingUp size={19} />
+        <span>Planner</span>
+      </Link>
+
+      {/* Center elevated scan button for mobile quick invoice/bill scanning */}
+      <Link
+        href="/purchasing/invoices"
+        className={`mobile-nav-fab ${isInvoices ? "active" : ""}`}
+        aria-label="Scan or upload invoice"
+      >
+        <div className="mobile-fab-icon-wrap">
+          <Camera size={22} />
+        </div>
+        <span className="mobile-fab-title">Scan Bill</span>
+      </Link>
+
+      <Link
+        href="/inventory/stock"
+        className={`mobile-nav-btn ${isStock ? "active" : ""}`}
+      >
+        <Layers3 size={19} />
+        <span>Stock</span>
+      </Link>
+
+      <button
+        type="button"
+        className="mobile-nav-btn"
+        onClick={onOpenMenu}
+        aria-label="Open full menu"
+      >
+        <Menu size={19} />
+        <span>Menu</span>
+      </button>
+    </nav>
+  );
+}
 
 export function Shell({ children }: { children: ReactNode }) {
   const w = useWorkspace(),
@@ -201,13 +265,23 @@ export function Shell({ children }: { children: ReactNode }) {
     <RealtimeProvider businessId={w.business}>
       <div className="app">
         <aside className={"sidebar " + (open ? "is-open" : "")}>
-          <Link href="/overview" className="procurax-brand">
-            <AnimatedLogo size={32} />
-            <div className="brand-text">
-              <span className="brand-title">ProcuraX</span>
-              <span className="brand-subtitle">AI Procurement Intelligence for MSMEs</span>
-            </div>
-          </Link>
+          <div className="sidebar-header-row">
+            <Link href="/overview" className="procurax-brand">
+              <AnimatedLogo size={32} />
+              <div className="brand-text">
+                <span className="brand-title">ProcuraX</span>
+                <span className="brand-subtitle">AI Procurement Intelligence for MSMEs</span>
+              </div>
+            </Link>
+            <button
+              type="button"
+              className="sidebar-close-btn"
+              aria-label="Close navigation"
+              onClick={() => setOpen(false)}
+            >
+              <X size={18} />
+            </button>
+          </div>
 
           <div className="store-selector-card">
             <div className="store-selector-left">
@@ -310,6 +384,11 @@ export function Shell({ children }: { children: ReactNode }) {
             >
               <Menu size={20} />
             </button>
+
+            <Link href="/overview" className="mobile-topbar-brand">
+              <AnimatedLogo size={24} />
+              <span className="mobile-brand-title">ProcuraX</span>
+            </Link>
 
             {getBreadcrumbs()}
 
@@ -431,6 +510,9 @@ export function Shell({ children }: { children: ReactNode }) {
             </footer>
           </main>
         </div>
+
+        {/* Mobile Fixed Bottom Navigation Bar */}
+        <MobileBottomNav path={path} onOpenMenu={() => setOpen(true)} />
 
         {showResetModal && (
           <div className="modal-overlay">

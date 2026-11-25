@@ -145,6 +145,7 @@ export function LivePulseBadge() {
 
   return (
     <button
+      className="live-pulse-badge"
       onClick={toggleDrawer}
       style={{
         display: "inline-flex",
@@ -172,7 +173,7 @@ export function LivePulseBadge() {
           display: "inline-block",
         }}
       />
-      <span>{isConnected ? "Live Sync" : isConnecting ? "Connecting..." : "Offline"}</span>
+      <span className="live-pulse-text">{isConnected ? "Live Sync" : isConnecting ? "Connecting..." : "Offline"}</span>
 
       {unreadCount > 0 && (
         <span
