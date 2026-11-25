@@ -4937,4 +4937,14 @@ footer {
     font-size: 11px !important;
     padding: 0 8px !important;
   }
+
+  /* Planner Floating Bar on Mobile - Float cleanly above the 50px bottom navigation */
+  .planner-floating-bar {
+    position: sticky !important;
+    bottom: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
+    padding: 10px 14px !important;
+    margin: 14px 0 !important;
+    border-radius: 10px !important;
+    z-index: 80 !important;
+  }
 }

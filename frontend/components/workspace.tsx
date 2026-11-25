@@ -82,7 +82,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     async (path: string, method = "GET", body?: unknown) => {
       const url =
         "/api/v1" +
-        (path.startsWith("/auth") || path === "/businesses"
+        (path.startsWith("/auth") || path.startsWith("/businesses")
           ? path
           : base + path);
       const response = await fetch(url, {

@@ -1871,12 +1871,18 @@ async def quick_record_sale(
     business_id: str,
     payload: QuickSaleInput,
     background: BackgroundTasks,
+    request: Request,
     user=Depends(access),
     db=Depends(get_db),
 ):
     b = db.get(Business, business_id)
     if not b:
         raise HTTPException(404, "Business not found")
+
+    branch_id = request.headers.get("x-branch-id")
+    if not branch_id or branch_id == "all":
+        br = db.query(Branch).filter(Branch.business_id == b.id).first()
+        branch_id = br.id if br else None
 
     products = rows(db, Product, b.id)
     p = next((x for x in products if x.name.lower() == payload.product_name.lower() or x.sku.lower() == payload.product_name.lower()), None)
@@ -1886,16 +1892,15 @@ async def quick_record_sale(
             name=payload.product_name,
             sku=uid()[:8].upper(),
             sell_price=payload.unit_price,
-            pack_size=Decimal("1"),
+            pack=Decimal("1"),
             unit="unit",
-            lead_time_days=2,
-            review_period_days=7,
         )
         db.add(p)
         db.flush()
 
     tx = Transaction(
         business_id=b.id,
+        branch_id=branch_id,
         source="pos",
         source_key=uid(),
         kind="sale",
@@ -1908,6 +1913,7 @@ async def quick_record_sale(
 
     line = Line(
         business_id=b.id,
+        branch_id=branch_id,
         transaction_id=tx.id,
         product_id=p.id,
         qty=payload.qty,
@@ -1920,6 +1926,7 @@ async def quick_record_sale(
 
     mov = Movement(
         business_id=b.id,
+        branch_id=branch_id,
         product_id=p.id,
         qty=-payload.qty,
         kind="sale",
