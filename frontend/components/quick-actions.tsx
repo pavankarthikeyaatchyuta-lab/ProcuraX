@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Plus,
   ShoppingBag,
@@ -19,6 +20,7 @@ import { Button, Badge } from "./ui";
 
 export function QuickActionsBar() {
   const w = useWorkspace();
+  const pathname = usePathname();
   const [saleModalOpen, setSaleModalOpen] = useState(false);
   const [demandModalOpen, setDemandModalOpen] = useState(false);
   const [saleForm, setSaleForm] = useState({
@@ -145,30 +147,32 @@ export function QuickActionsBar() {
           Record Quick Sale
         </button>
 
-        {/* 2. Upload Supplier Invoice */}
-        <Link href="/purchasing/invoices/upload" style={{ textDecoration: "none" }}>
-          <button
-            type="button"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "6px",
-              padding: "7px 13px",
-              borderRadius: "7px",
-              background: "#2563eb",
-              color: "#ffffff",
-              fontSize: "12.5px",
-              fontWeight: 600,
-              border: "none",
-              cursor: "pointer",
-              boxShadow: "0 1px 2px rgba(37, 99, 235, 0.2)",
-              transition: "all 0.15s ease",
-            }}
-          >
-            <Upload size={14} />
-            Upload Supplier Invoice
-          </button>
-        </Link>
+        {/* 2. Upload Supplier Invoice (hidden when already on purchasing/invoices) */}
+        {!pathname?.startsWith("/purchasing/invoices") && (
+          <Link href="/purchasing/invoices/upload" style={{ textDecoration: "none" }}>
+            <button
+              type="button"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "7px 13px",
+                borderRadius: "7px",
+                background: "#2563eb",
+                color: "#ffffff",
+                fontSize: "12.5px",
+                fontWeight: 600,
+                border: "none",
+                cursor: "pointer",
+                boxShadow: "0 1px 2px rgba(37, 99, 235, 0.2)",
+                transition: "all 0.15s ease",
+              }}
+            >
+              <Upload size={14} />
+              Upload Supplier Invoice
+            </button>
+          </Link>
+        )}
 
         {/* 3. Log Customer Request */}
         <button
