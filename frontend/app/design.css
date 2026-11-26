@@ -12,20 +12,8 @@
   --shadow: 0 3px 14px #1e3a5f08;
   --shadow-3d: 0 8px 32px #1d4ed814, 0 2px 8px #0ea5e910;
   --shadow-3d-hover: 0 16px 48px #1d4ed820, 0 4px 16px #0ea5e918;
-  --cursor-blue: #2563eb;
 }
 
-/* ═══════════════════════════════════════════
-   CUSTOM PROCURAX PROCUREMENT CURSOR
-   (Precision Arrow with 3D Supply Crate &
-    Targeting Reticle for Interactive Elements)
-════════════════════════════════════════════ */
-html, body, *, *::before, *::after {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32' fill='none'%3E%3Cdefs%3E%3Cfilter id='p-glow' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeDropShadow dx='0' dy='1.5' stdDeviation='1.2' flood-color='%23000000' flood-opacity='0.45'/%3E%3C/filter%3E%3C/defs%3E%3Cg filter='url(%23p-glow)'%3E%3Cpath d='M3 3 L3 22 L7.5 18 L11.5 26 L14.5 24.5 L10.5 16.5 L17 16.5 Z' fill='%230b132b' stroke='%2338bdf8' stroke-width='1.5' stroke-linejoin='round'/%3E%3Cpath d='M4.5 5.5 L4.5 19 L7.5 16.2 L11 23.5 L12.5 22.5 L9 15.2 L14.5 15.2 Z' fill='%232563eb'/%3E%3C/g%3E%3Cg transform='translate(13, 11)' filter='url(%23p-glow)'%3E%3Cpolygon points='8,1 15,5 8,9 1,5' fill='%2338bdf8' stroke='%23bae6fd' stroke-width='0.5'/%3E%3Cpolygon points='1,5 8,9 8,16 1,12' fill='%231d4ed8' stroke='%2360a5fa' stroke-width='0.5'/%3E%3Cpolygon points='8,9 15,5 15,12 8,16' fill='%230f172a' stroke='%2338bdf8' stroke-width='0.5'/%3E%3Cline x1='4.5' y1='3' x2='4.5' y2='14' stroke='%23ffffff' stroke-width='0.8' stroke-opacity='0.85'/%3E%3Cline x1='11.5' y1='3' x2='11.5' y2='14' stroke='%23ffffff' stroke-width='0.7'/%3E%3Ccircle cx='8' cy='5' r='1.2' fill='%23ffffff'/%3E%3Ccircle cx='8' cy='5' r='2' fill='none' stroke='%2300f2fe' stroke-width='0.6'/%3E%3C/g%3E%3C/svg%3E") 3 3, auto;
-}
-a, button, [role="button"], select, label, input, .nav-link, .tab, .action-btn, tr[onClick], .clickable {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32' fill='none'%3E%3Cdefs%3E%3Cfilter id='h-glow' x='-30%25' y='-30%25' width='160%25' height='160%25'%3E%3CfeDropShadow dx='0' dy='1' stdDeviation='2' flood-color='%232563eb' flood-opacity='0.6'/%3E%3C/filter%3E%3C/defs%3E%3Ccircle cx='16' cy='16' r='13' stroke='%2338bdf8' stroke-width='1.2' stroke-dasharray='4 3' stroke-opacity='0.9'/%3E%3Ccircle cx='16' cy='16' r='8' stroke='%232563eb' stroke-width='1' stroke-opacity='0.6'/%3E%3Cpath d='M6 10 L6 6 L10 6' stroke='%2338bdf8' stroke-width='1.5' stroke-linecap='round'/%3E%3Cpath d='M26 10 L26 6 L22 6' stroke='%2338bdf8' stroke-width='1.5' stroke-linecap='round'/%3E%3Cpath d='M6 22 L6 26 L10 26' stroke='%2338bdf8' stroke-width='1.5' stroke-linecap='round'/%3E%3Cpath d='M26 22 L26 26 L22 26' stroke='%2338bdf8' stroke-width='1.5' stroke-linecap='round'/%3E%3Cg transform='translate(8, 7)' filter='url(%23h-glow)'%3E%3Cpolygon points='8,1 15,5 8,9 1,5' fill='%2360a5fa' stroke='%23e0f2fe' stroke-width='0.6'/%3E%3Cpolygon points='1,5 8,9 8,16 1,12' fill='%232563eb' stroke='%2393c5fd' stroke-width='0.6'/%3E%3Cpolygon points='8,9 15,5 15,12 8,16' fill='%231e3a8a' stroke='%2360a5fa' stroke-width='0.6'/%3E%3Cpath d='M8 12 L8 4 M6 6 L8 4 L10 6' stroke='%23ffffff' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/g%3E%3C/svg%3E") 16 16, pointer;
-}
 button:disabled { cursor: not-allowed; }
 
 /* ═══════════════════════════════════════════
@@ -4460,13 +4448,6 @@ footer {
 /* ==========================================================================
    MOBILE-FIRST NAVIGATION & APP EXPERIENCE
    ========================================================================== */
-
-/* Cursor reset for touch/mobile devices */
-@media (hover: none) and (pointer: coarse), (max-width: 768px) {
-  html, body, button, a, select, input, textarea {
-    cursor: auto !important;
-  }
-}
 
 /* Mobile Bottom Navigation Bar (Hidden by default on desktop) */
 .mobile-bottom-nav {
