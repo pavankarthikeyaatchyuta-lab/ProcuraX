@@ -37,7 +37,6 @@ import { useWorkspace, useResource } from "./workspace";
 import { Loading } from "./ui";
 import { RealtimeProvider, LivePulseBadge } from "./realtime-provider";
 import { QuickActionsBar } from "./quick-actions";
-import { AnimatedLogo } from "./animated-ui";
 
 export function ProcuraXLogo({ size = 30 }: { size?: number }) {
   return (
@@ -270,7 +269,7 @@ export function Shell({ children }: { children: ReactNode }) {
         <aside className={"sidebar " + (open ? "is-open" : "")}>
           <div className="sidebar-header-row">
             <Link href="/overview" className="procurax-brand">
-              <AnimatedLogo size={32} />
+              <ProcuraXLogo size={32} />
               <div className="brand-text">
                 <span className="brand-title">ProcuraX</span>
                 <span className="brand-subtitle">AI Procurement Intelligence for MSMEs</span>
@@ -389,7 +388,7 @@ export function Shell({ children }: { children: ReactNode }) {
             </button>
 
             <Link href="/overview" className="mobile-topbar-brand">
-              <AnimatedLogo size={20} />
+              <ProcuraXLogo size={20} />
               <span className="mobile-brand-title">ProcuraX</span>
             </Link>
 

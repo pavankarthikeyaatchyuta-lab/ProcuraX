@@ -17,30 +17,6 @@
 button:disabled { cursor: not-allowed; }
 
 /* ═══════════════════════════════════════════
-   3‑D ANIMATED LOGO
-════════════════════════════════════════════ */
-@keyframes px-float {
-  0%, 100% { transform: translateY(0) rotateY(0deg) rotateX(4deg); }
-  40%       { transform: translateY(-3px) rotateY(180deg) rotateX(4deg); }
-  80%       { transform: translateY(-1px) rotateY(340deg) rotateX(4deg); }
-}
-@keyframes px-glow-pulse {
-  0%, 100% { filter: drop-shadow(0 0 4px #38bdf888); }
-  50%       { filter: drop-shadow(0 0 10px #38bdf8cc) drop-shadow(0 0 20px #2563eb55); }
-}
-.px-logo-3d {
-  display: inline-block;
-  transform-style: preserve-3d;
-  perspective: 300px;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .px-logo-3d svg {
-    animation: px-float 7s ease-in-out infinite, px-glow-pulse 3.5s ease-in-out infinite;
-    transform-origin: center;
-  }
-}
-
-/* ═══════════════════════════════════════════
    3‑D CARD HOVER EFFECT
 ════════════════════════════════════════════ */
 .kpi-card, .card, .table-card, .planner-card {
