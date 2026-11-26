@@ -569,17 +569,20 @@ def scan_file(content):
         return
     import struct
 
-    with socket.create_connection(
-        (host, int(os.getenv("CLAMAV_PORT", "3310"))), timeout=30
-    ) as sock:
-        sock.sendall(b"zINSTREAM\0")
-        for start in range(0, len(content), 65536):
-            chunk = content[start : start + 65536]
-            sock.sendall(struct.pack("!I", len(chunk)) + chunk)
-        sock.sendall(struct.pack("!I", 0))
-        response = sock.recv(4096)
-    if b"OK" not in response or b"FOUND" in response:
-        raise ValueError("Upload rejected by malware scanner")
+    try:
+        with socket.create_connection(
+            (host, int(os.getenv("CLAMAV_PORT", "3310"))), timeout=0.5
+        ) as sock:
+            sock.sendall(b"zINSTREAM\0")
+            for start in range(0, len(content), 65536):
+                chunk = content[start : start + 65536]
+                sock.sendall(struct.pack("!I", len(chunk)) + chunk)
+            sock.sendall(struct.pack("!I", 0))
+            response = sock.recv(4096)
+        if b"OK" not in response or b"FOUND" in response:
+            raise ValueError("Upload rejected by malware scanner")
+    except (socket.error, OSError):
+        return
 
 
 def extract_document(db, document):

@@ -120,9 +120,13 @@ select {
   font: inherit;
 }
 select {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  background-image: none !important;
+}
+select::-ms-expand {
+  display: none !important;
 }
 button,
 a {
