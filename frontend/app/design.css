@@ -184,7 +184,9 @@ textarea {
   line-height: 1.5;
 }
 select {
-  padding-right: 8px;
+  min-height: 38px;
+  padding: 8px 12px;
+  line-height: normal;
 }
 input:focus-visible,
 select:focus-visible,
@@ -463,7 +465,9 @@ svg {
 .topbar-actions {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 14px;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
 }
 .global-search {
   display: flex;
@@ -1747,6 +1751,9 @@ footer {
 .review-line input,
 .review-line select {
   font-size: 13px;
+  min-height: 38px;
+  line-height: normal;
+  padding: 7px 10px;
 }
 .review-layout form > .primary {
   display: flex;

@@ -322,10 +322,10 @@ export function InvoiceReview({
       >
         <div className="form-grid">
           <label>
-            <span style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "4px" }}>
               <span>Supplier</span>
               {e.supplier_name && (
-                <span style={{ fontSize: "11px", color: "#2563eb", background: "#eff6ff", padding: "1px 7px", borderRadius: "10px", border: "1px solid #dbeafe" }}>
+                <span style={{ fontSize: "11px", color: "#2563eb", background: "#eff6ff", padding: "2px 8px", borderRadius: "10px", border: "1px solid #dbeafe", fontWeight: 500 }}>
                   Extracted: {e.supplier_name} {e.supplier_gstin ? `(${e.supplier_gstin})` : ""}
                 </span>
               )}
