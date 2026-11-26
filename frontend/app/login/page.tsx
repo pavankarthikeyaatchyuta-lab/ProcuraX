@@ -81,7 +81,7 @@ export default function Login(){
             }}
           />
           <div className="login-footnote">
-            Demo Credentials: <strong>owner@vyaya.local</strong> / <strong>p06cC9SCqHvO_d09e5zpi7K5</strong><br/>
+            Demo Credentials: <strong>owner@vyaya.local</strong> / <strong>password123</strong><br/>
             Your business records stay isolated and securely stored in your local workspace.
           </div>
         </div>

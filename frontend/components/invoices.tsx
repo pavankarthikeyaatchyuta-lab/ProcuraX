@@ -43,7 +43,7 @@ export function Invoices() {
     try {
       const fd = new FormData();
       fd.append("file", file);
-      await api(`/businesses/${business}/branches/${branch}/documents`, "POST", fd);
+      await api("/documents", "POST", fd);
       setNotice(`Invoice "${file.name}" uploaded successfully for extraction & verification.`);
       resource.reload();
     } catch (err: any) {
