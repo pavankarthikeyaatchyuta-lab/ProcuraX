@@ -276,7 +276,9 @@ export function DataTable({
               }}
             />
           </label>
-          <span className="muted">{values.length} records</span>
+          <span className="muted">
+            {values.length} {values.length === 1 ? "record" : "records"}
+          </span>
         </div>
       )}
       {values.length ? (

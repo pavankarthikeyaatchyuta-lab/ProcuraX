@@ -772,6 +772,12 @@ def documents(business_id, user=Depends(access), db=Depends(get_db)):
     )
 
 
+@app.get(B + "/documents/{document_id}")
+def document_detail(business_id, document_id, user=Depends(access), db=Depends(get_db)):
+    d = owned(db, Document, document_id, business_id)
+    return out({k: v for k, v in plain(d).items() if k != "path"})
+
+
 @app.get(B + "/documents/{document_id}/file")
 def document_file(business_id, document_id, user=Depends(access), db=Depends(get_db)):
     d = owned(db, Document, document_id, business_id)

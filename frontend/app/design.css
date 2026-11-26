@@ -189,6 +189,9 @@ textarea {
 }
 select {
   padding-right: 28px;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
 }
 input:focus-visible,
 select:focus-visible,
@@ -3936,6 +3939,9 @@ footer {
   color: #475569 !important;
   cursor: pointer;
   outline: none !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
 }
 
 /* Purchase Trend Chart */

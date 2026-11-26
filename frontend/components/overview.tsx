@@ -333,7 +333,7 @@ export function Overview() {
           <div>
             <div className="kpi-value">{demandRequestsCount} requests</div>
             <div className="kpi-subtext" style={{ color: "#0284c7" }}>
-              <span>↑ +33% vs. last period</span>
+              <span>{demandRequestsCount > 0 ? "Active customer demand" : "No requests in period"}</span>
             </div>
           </div>
         </Link>
@@ -441,7 +441,7 @@ export function Overview() {
                   <Package size={17} />
                 </div>
                 <div className="priority-text-block">
-                  <strong>Reorder 8 low-stock products</strong>
+                  <strong>Reorder {lowStockCount} low-stock {lowStockCount === 1 ? "product" : "products"}</strong>
                   <span>Avoid potential stockouts</span>
                 </div>
               </div>
@@ -454,7 +454,7 @@ export function Overview() {
                   <ShieldAlert size={17} />
                 </div>
                 <div className="priority-text-block">
-                  <strong>Review 3 price increase alerts</strong>
+                  <strong>Review {leakAlertsCount} price increase {leakAlertsCount === 1 ? "alert" : "alerts"}</strong>
                   <span>Check supplier price changes and margin impact</span>
                 </div>
               </div>
@@ -467,7 +467,7 @@ export function Overview() {
                   <Sparkles size={17} />
                 </div>
                 <div className="priority-text-block">
-                  <strong>Address 5 pending customer requests</strong>
+                  <strong>Address {demandRequestsCount} pending customer {demandRequestsCount === 1 ? "request" : "requests"}</strong>
                   <span>Capture demand and avoid lost sales</span>
                 </div>
               </div>
