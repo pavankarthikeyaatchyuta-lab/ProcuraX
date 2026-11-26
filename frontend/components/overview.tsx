@@ -219,7 +219,6 @@ export function Overview() {
               <option value="90">Last 90 days</option>
               <option value="180">Last 180 days</option>
             </select>
-            <ChevronDown size={13} style={{ color: "#64748b" }} />
           </div>
 
           <Link href="/purchasing/invoices" className="upload-invoice-btn">
@@ -394,7 +393,6 @@ export function Overview() {
                 <option value="6m">Last 6 months</option>
                 <option value="12m">Last 12 months</option>
               </select>
-              <ChevronDown size={12} />
             </div>
           </div>
 

@@ -252,14 +252,36 @@ export function InvoiceReview({
           ],
     ),
     [error, setError] = useState(""),
-    [busy, setBusy] = useState(false);
+    [busy, setBusy] = useState(false),
+    [lineSuggestions, setLineSuggestions] = useState<Record<number, Row[]>>({});
   const update = (i: number, key: string, value: string) =>
     setLines(lines.map((l, n) => (n === i ? { ...l, [key]: value } : l)));
+
+  // Calculate live reconciled totals
+  const calculatedGrandTotal = lines.reduce((sum, l) => {
+    const qty = Number(l.qty) || 0;
+    const rate = Number(l.rate) || 0;
+    const discount = Number(l.discount) || 0;
+    const taxPct = Number(l.tax_pct) || 0;
+    const freight = Number(l.freight) || 0;
+    const baseAmount = Math.max(0, qty * rate - discount);
+    const taxAmount = (baseAmount * taxPct) / 100;
+    return sum + baseAmount + taxAmount + freight;
+  }, 0);
+  const extractedTotal = Number(e.total) || 0;
+  const isReconciled = extractedTotal > 0 && Math.abs(calculatedGrandTotal - extractedTotal) < 1.0;
+
   return (
     <div className="review-layout">
       <div className="document-preview">
         {d.mime === "application/json" ? (
           <pre>{JSON.stringify(e.source_json || e, null, 2)}</pre>
+        ) : d.mime?.startsWith("image/") ? (
+          <img
+            src={"/api/v1" + base + `/documents/${d.id}/file?branch_id=${branch}`}
+            alt="Original invoice"
+            style={{ width: "100%", height: "auto", maxHeight: "100%", objectFit: "contain", borderRadius: "8px" }}
+          />
         ) : (
           <iframe
             title="Original invoice"
@@ -300,13 +322,20 @@ export function InvoiceReview({
       >
         <div className="form-grid">
           <label>
-            Supplier
+            <span style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span>Supplier</span>
+              {e.supplier_name && (
+                <span style={{ fontSize: "11px", color: "#2563eb", background: "#eff6ff", padding: "1px 7px", borderRadius: "10px", border: "1px solid #dbeafe" }}>
+                  Extracted: {e.supplier_name} {e.supplier_gstin ? `(${e.supplier_gstin})` : ""}
+                </span>
+              )}
+            </span>
             <select
               name="supplier_id"
               required
               defaultValue={
                 e.supplier_id ||
-                suppliers.find((s) => s.gstin === e.supplier_gstin)?.id ||
+                suppliers.find((s) => s.gstin === e.supplier_gstin || s.name?.toLowerCase() === e.supplier_name?.toLowerCase())?.id ||
                 ""
               }
             >
@@ -385,37 +414,59 @@ export function InvoiceReview({
                 <option value="">Confirm product…</option>
                 {products.map((p) => (
                   <option value={p.id} key={p.id}>
-                    {p.name} · {p.size} · {p.variant}
+                    {[p.name, p.size, p.variant].filter(Boolean).join(" · ")}
                   </option>
                 ))}
               </select>
             </label>
-            <button
-              type="button"
-              className="text-button"
-              onClick={async () => {
-                try {
-                  const suggestions = await api(
-                    base +
-                      "/products/match/suggest?text=" +
-                      encodeURIComponent(l.raw_description),
-                  );
-                  setError(
-                    "Suggestions (confirm pack/variant manually): " +
-                      (suggestions as unknown as Row[])
-                        .map(
-                          (s) =>
-                            `${s.name || s.product_id} ${Math.round(s.confidence * 100)}%`,
-                        )
-                        .join("; "),
-                  );
-                } catch (err) {
-                  setError((err as Error).message);
-                }
-              }}
-            >
-              Suggest a mapping
-            </button>
+            <div style={{ margin: "6px 0 10px" }}>
+              <button
+                type="button"
+                className="text-button"
+                style={{ fontSize: "12px", color: "#2563eb", fontWeight: 600, padding: "2px 0" }}
+                onClick={async () => {
+                  try {
+                    const suggestions = await api(
+                      base +
+                        "/products/match/suggest?text=" +
+                        encodeURIComponent(l.raw_description),
+                    );
+                    setLineSuggestions((prev) => ({
+                      ...prev,
+                      [i]: (suggestions as unknown as Row[]) || [],
+                    }));
+                  } catch (err) {
+                    setError((err as Error).message);
+                  }
+                }}
+              >
+                Suggest a mapping
+              </button>
+              {lineSuggestions[i] && lineSuggestions[i].length > 0 && (
+                <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "6px" }}>
+                  <span style={{ fontSize: "11px", color: "#64748b", alignSelf: "center" }}>Click to map:</span>
+                  {lineSuggestions[i].map((s: Row) => (
+                    <button
+                      key={s.product_id || s.name}
+                      type="button"
+                      onClick={() => update(i, "product_id", s.product_id || "")}
+                      style={{
+                        background: l.product_id === s.product_id ? "#2563eb" : "#eff6ff",
+                        color: l.product_id === s.product_id ? "#ffffff" : "#2563eb",
+                        border: "1px solid #bfdbfe",
+                        borderRadius: "14px",
+                        padding: "3px 10px",
+                        fontSize: "11.5px",
+                        cursor: "pointer",
+                        fontWeight: 500,
+                      }}
+                    >
+                      {s.name || s.product_id} ({Math.round((s.confidence || 0) * 100)}%)
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
             <div className="form-grid">
               {[
                 ["qty", "Invoice quantity"],
@@ -462,6 +513,44 @@ export function InvoiceReview({
           <Plus size={15} />
           Add line
         </button>
+
+        {/* Live Arithmetic Reconciliation Summary */}
+        <div
+          style={{
+            margin: "18px 0 10px",
+            padding: "14px 18px",
+            background: isReconciled ? "#f0fdf4" : "#fefce8",
+            border: `1px solid ${isReconciled ? "#bbf7d0" : "#fef08a"}`,
+            borderRadius: "10px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "10px",
+          }}
+        >
+          <div>
+            <div style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em", color: isReconciled ? "#15803d" : "#a16207" }}>
+              {isReconciled ? "✓ Arithmetic Reconciled" : "Arithmetic Check"}
+            </div>
+            <div style={{ fontSize: "13px", color: "#334155", marginTop: "2px" }}>
+              Lines Total: <strong>₹{calculatedGrandTotal.toFixed(2)}</strong>
+              {extractedTotal > 0 && (
+                <span style={{ marginLeft: "12px", color: "#64748b" }}>
+                  Invoice Stated Total: <strong>₹{extractedTotal.toFixed(2)}</strong>
+                </span>
+              )}
+            </div>
+          </div>
+          <div style={{ fontSize: "12px", fontWeight: 600, color: isReconciled ? "#15803d" : "#ca8a04" }}>
+            {isReconciled
+              ? "Totals match source document perfectly"
+              : extractedTotal > 0
+                ? `Difference: ₹${Math.abs(calculatedGrandTotal - extractedTotal).toFixed(2)}`
+                : "Checking line items..."}
+          </div>
+        </div>
+
         {error && (
           <div className="error" role="alert">
             {error}

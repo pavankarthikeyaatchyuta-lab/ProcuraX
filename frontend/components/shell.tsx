@@ -301,7 +301,6 @@ export function Shell({ children }: { children: ReactNode }) {
                 ))}
               </select>
             </div>
-            <ChevronDown size={14} className="store-chevron" />
           </div>
 
           <nav className="sidebar-nav">
@@ -430,7 +429,6 @@ export function Shell({ children }: { children: ReactNode }) {
                     </option>
                   ))}
                 </select>
-                <ChevronDown size={12} />
               </div>
 
               <LivePulseBadge />
