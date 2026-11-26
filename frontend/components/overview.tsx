@@ -224,7 +224,7 @@ export function Overview() {
 
           <Link href="/purchasing/invoices" className="upload-invoice-btn">
             <Upload size={15} />
-            + Upload Invoice
+            Upload Invoice
           </Link>
         </div>
       </div>

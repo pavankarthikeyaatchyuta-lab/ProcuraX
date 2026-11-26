@@ -53,7 +53,7 @@ export function Stock() {
         <div className="overview-header-actions">
           <Link href="/inventory/products/new" className="upload-invoice-btn">
             <Plus size={15} />
-            + Add Product
+            Add Product
           </Link>
         </div>
       </div>

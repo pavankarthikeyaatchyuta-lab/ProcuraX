@@ -296,7 +296,7 @@ export function Shell({ children }: { children: ReactNode }) {
               >
                 {w.me.businesses.map((b: any) => (
                   <option value={b.id} key={b.id}>
-                    {b.name === "My Retail Store" ? "Main Store" : b.name}
+                    {b.name}
                   </option>
                 ))}
               </select>

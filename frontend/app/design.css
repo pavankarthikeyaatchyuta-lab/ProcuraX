@@ -119,6 +119,11 @@ textarea,
 select {
   font: inherit;
 }
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
 button,
 a {
   touch-action: manipulation;
@@ -3188,6 +3193,10 @@ footer {
   padding: 0 !important;
   min-height: auto !important;
   cursor: pointer;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+}
   width: 100%;
   outline: none !important;
 }
@@ -3353,7 +3362,7 @@ footer {
   border: 1px solid #e2e8f0;
   border-radius: 9999px;
   padding: 6px 14px;
-  width: 280px;
+  width: 320px;
   transition: all 0.15s ease;
 }
 
@@ -3412,6 +3421,9 @@ footer {
   color: #334155;
   outline: none !important;
   cursor: pointer;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
 }
 
 .notification-pill-btn {
@@ -3587,6 +3599,9 @@ footer {
   color: #334155 !important;
   cursor: pointer;
   outline: none !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
 }
 
 .upload-invoice-btn {

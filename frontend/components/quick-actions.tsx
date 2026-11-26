@@ -147,8 +147,8 @@ export function QuickActionsBar() {
           Record Quick Sale
         </button>
 
-        {/* 2. Upload Supplier Invoice (hidden when already on purchasing/invoices) */}
-        {!pathname?.startsWith("/purchasing/invoices") && (
+        {/* 2. Upload Supplier Invoice (hidden when already on purchasing/invoices or overview) */}
+        {!pathname?.startsWith("/purchasing/invoices") && pathname !== "/overview" && (
           <Link href="/purchasing/invoices/upload" style={{ textDecoration: "none" }}>
             <button
               type="button"
@@ -198,53 +198,57 @@ export function QuickActionsBar() {
           Log Customer Request
         </button>
 
-        {/* 4. Add New Product */}
-        <Link href="/inventory/products/new" style={{ textDecoration: "none" }}>
-          <button
-            type="button"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "6px",
-              padding: "7px 13px",
-              borderRadius: "7px",
-              background: "#f8fafc",
-              color: "#1e293b",
-              fontSize: "12.5px",
-              fontWeight: 600,
-              border: "1px solid #cbd5e1",
-              cursor: "pointer",
-              transition: "all 0.15s ease",
-            }}
-          >
-            <Package size={14} />
-            Add New Product
-          </button>
-        </Link>
+        {/* 4. Add New Product (hidden when on inventory stock page) */}
+        {!pathname?.startsWith("/inventory/stock") && !pathname?.startsWith("/inventory/products") && (
+          <Link href="/inventory/products/new" style={{ textDecoration: "none" }}>
+            <button
+              type="button"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "7px 13px",
+                borderRadius: "7px",
+                background: "#f8fafc",
+                color: "#1e293b",
+                fontSize: "12.5px",
+                fontWeight: 600,
+                border: "1px solid #cbd5e1",
+                cursor: "pointer",
+                transition: "all 0.15s ease",
+              }}
+            >
+              <Package size={14} />
+              Add New Product
+            </button>
+          </Link>
+        )}
 
-        {/* 5. Open Purchasing Planner */}
-        <Link href="/purchasing/planner" style={{ textDecoration: "none" }}>
-          <button
-            type="button"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "6px",
-              padding: "7px 13px",
-              borderRadius: "7px",
-              background: "#f8fafc",
-              color: "#1e293b",
-              fontSize: "12.5px",
-              fontWeight: 600,
-              border: "1px solid #cbd5e1",
-              cursor: "pointer",
-              transition: "all 0.15s ease",
-            }}
-          >
-            <TrendingUp size={14} />
-            Open Purchasing Planner
-          </button>
-        </Link>
+        {/* 5. Open Purchasing Planner (hidden when on planner page) */}
+        {!pathname?.startsWith("/purchasing/planner") && (
+          <Link href="/purchasing/planner" style={{ textDecoration: "none" }}>
+            <button
+              type="button"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "7px 13px",
+                borderRadius: "7px",
+                background: "#f8fafc",
+                color: "#1e293b",
+                fontSize: "12.5px",
+                fontWeight: 600,
+                border: "1px solid #cbd5e1",
+                cursor: "pointer",
+                transition: "all 0.15s ease",
+              }}
+            >
+              <TrendingUp size={14} />
+              Open Purchasing Planner
+            </button>
+          </Link>
+        )}
       </div>
 
       {/* Modal: Quick Sale POS Entry */}
